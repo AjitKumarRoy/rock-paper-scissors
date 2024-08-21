@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissors</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <p class="heading">Rock Paper Scissors</p>
+
+    <button class="image" onclick="
+        playGame('Rock');
+    "><img src="./images/rock-emoji.png" width="50px"></button>
+
+    <button class="image" onclick="
+        playGame('Paper');
+    "><img src="./images/paper-emoji.png" width="50px"></button>
+
+    <button class="image" onclick="
+        playGame('Scissor');
+    "><img src="./images/scissor-emoji.png" width="50px"></button>
+
+    <p class="js-result"></p>
+    <p class="js-game-display"></p>
+
+    <p class="js-score"></p>
+    <button class="reset" onclick="
+        //Reset the score in memory
+        score.wins = 0;
+        score.loses = 0;
+        score.ties = 0;
+
+        //Remove the stored score from localStorage
+        localStorage.removeItem('storedScore');
+
+        //Update the displayed score
+        displayScore();
+    ">Reset</button>
+
+
+    <script>
+
+        //Initialize or retrieve the score from localStorage
+        let score = JSON.parse(localStorage.getItem('storedScore')) || {
+            wins: 0,
+            loses: 0,
+            ties: 0
+        }
+
+
+
+        console.log(score);
+
+        //Call this to update the display with the initial score when the page loads
+        displayScore();
+
+
+        //function to update the displayed score
+        function displayScore() {
+            document.querySelector('.js-score').innerHTML = `Wins: ${score.wins}, Losses: ${score.loses}, Ties: ${score.ties}`;
+        }
+
+
+        //function to pick the player move and play the game
+        function playGame(playerMove) {
+            const compMove = computerPickedMove();
+            let result = '';
+
+            if (playerMove === 'Rock') {
+                if (compMove === 'Rock') {
+                    result = 'Tie';
+                } else if (compMove === 'Paper') {
+                    result = 'You Lose';
+                } else if (compMove === 'Scissor') {
+                    result = 'You Win';
+                }
+            } else if (playerMove === 'Paper') {
+                if (compMove === 'Rock') {
+                    result = 'You Win';
+                } else if (compMove === 'Paper') {
+                    result = 'Tie';
+                } else if (compMove === 'Scissor') {
+                    result = 'You Lose';
+                }
+            } else if (playerMove === 'Scissor') {
+                if (compMove === 'Rock') {
+                    result = 'You Lose';
+                } else if (compMove === 'Paper') {
+                    result = 'You Win';
+                } else if (compMove === 'Scissor') {
+                    result = 'Tie';
+                }
+            }
+
+            console.log(compMove);
+
+
+            if (result === 'You Win') {
+                score.wins++;
+            } else if (result === 'You Lose') {
+                score.loses++;
+            } else if (result === 'Tie') {
+                score.ties++;
+            }
+
+            //display the result
+            document.querySelector('.js-result').innerHTML = result;
+
+            //display the game playing
+            const movesElement = document.querySelector('.js-game-display');
+            movesElement.innerHTML = `
+            <figure class="player-move">
+                <img src="./images/${playerMove}-emoji.png" class="move-icon" width="100px" alt="${playerMove}">
+                <figcaption>You</figcaption>
+            </figure>
+            <figure class="computer-move">     
+                <img src="./images/${compMove}-emoji.png" class="move-icon" width="100px" alt="${compMove}">
+                <figcaption>Computer</figcaption>
+            </figure>
+            `;
+
+            //display the score
+            displayScore();
+
+            localStorage.setItem('storedScore', JSON.stringify(score));
+
+            return result;
+        }
+
+
+        //function to pick the computer move
+        function computerPickedMove() {
+            const move = Math.random();
+            let compMove = '';
+
+            if (move >= 0 && move < 1 / 3) {
+                compMove = 'Rock';
+            } else if (move >= 1 / 3 && move < 2 / 3) {
+                compMove = 'Paper';
+            } else if (move >= 2 / 3 && move < 1) {
+                compMove = 'Scissor';
+            }
+
+            return compMove;
+        }
+    </script>
+</body>
+
+</html>
